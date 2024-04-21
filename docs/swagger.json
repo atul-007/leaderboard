@@ -1,0 +1,130 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Online Gaming Leaderboard API",
+      "description": "API for managing highscores in an online gaming site",
+      "version": "1.0.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "schemes": ["http"],
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "paths": {
+      "/submit": {
+        "post": {
+          "summary": "Submit score",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Score object",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Score"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Score submitted successfully"
+            },
+            "400": {
+              "description": "Invalid request"
+            }
+          }
+        }
+      },
+      "/get_rank": {
+        "get": {
+          "summary": "Get rank",
+          "produces": ["application/json"],
+          "parameters": [
+            {
+              "in": "query",
+              "name": "user_name",
+              "description": "User name",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "in": "query",
+              "name": "scope",
+              "description": "Scope: state, country, or globally",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User rank",
+              "schema": {
+                "type": "integer"
+              }
+            },
+            "400": {
+              "description": "Invalid request"
+            }
+          }
+        }
+      },
+      "/list_top_n": {
+        "get": {
+          "summary": "List top N",
+          "produces": ["application/json"],
+          "parameters": [
+            {
+              "in": "query",
+              "name": "n",
+              "description": "Number of ranks to list",
+              "required": true,
+              "type": "integer"
+            },
+            {
+              "in": "query",
+              "name": "scope",
+              "description": "Scope: state, country, or globally",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Top N scores",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Score"
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "Score": {
+        "type": "object",
+        "properties": {
+          "user_name": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  }
+  
