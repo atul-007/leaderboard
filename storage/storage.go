@@ -1,132 +1,10 @@
-// package storage
-
-// import (
-// 	"context"
-// 	"fmt"
-// 	"log"
-// 	"sort"
-
-// 	"github.com/atul-007/leaderboard/models"
-// 	"go.mongodb.org/mongo-driver/bson"
-// 	"go.mongodb.org/mongo-driver/mongo"
-// 	"go.mongodb.org/mongo-driver/mongo/options"
-// )
-
-// var scoreCollection *mongo.Collection
-
-// // InitMongoDB initializes MongoDB connection
-// func InitMongoDB() error {
-// 	clientOptions := options.Client().ApplyURI("mongodb+srv://atulranjan789:atul1234@cluster0.xr7e6vt.mongodb.net/")
-// 	client, err := mongo.Connect(context.Background(), clientOptions)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	scoreCollection = client.Database("gaming").Collection("scores")
-// 	log.Println("Connected to MongoDB")
-// 	return nil
-// }
-
-// // SaveScore saves score to MongoDB
-// func SaveScore(score *models.Score) error {
-// 	_, err := scoreCollection.InsertOne(context.Background(), score)
-// 	return err
-// }
-
-// // GetRank fetches the rank of a user based on userName and scope
-// func GetRank(userName, scope string) (int, error) {
-// 	var scores []models.Score
-
-// 	// Filter scores based on scope
-// 	filter := bson.M{}
-
-// 	if scope != "globally" {
-// 		if scope == "country" {
-// 			filter["country"] = userName
-// 		} else if scope == "state" {
-// 			filter["state"] = userName
-// 		}
-// 	}
-
-// 	cursor, err := scoreCollection.Find(context.Background(), filter)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-// 	defer cursor.Close(context.Background())
-
-// 	// Decode scores from cursor
-// 	if err := cursor.All(context.Background(), &scores); err != nil {
-// 		return 0, err
-// 	}
-
-// 	for _, s := range scores {
-// 		fmt.Println("Score:", s)
-// 	}
-
-// 	// Sort scores by score value in descending order
-// 	sort.Slice(scores, func(i, j int) bool {
-// 		return scores[i].Score > scores[j].Score
-// 	})
-
-// 	// Find rank of the user
-// 	rank := 0
-// 	for i, s := range scores {
-// 		if s.UserName == userName {
-// 			rank = i + 1
-// 			break
-// 		}
-// 	}
-
-// 	fmt.Println("Rank:", rank)
-
-// 	return rank, nil
-// }
-
-// // ListTopN lists the top N ranks based on the scope
-// func ListTopN(n int, scope string) ([]models.Score, error) {
-// 	var scores []models.Score
-
-// 	// Define the filter based on scope
-// 	filter := bson.M{}
-// 	switch scope {
-// 	case "":
-// 		// Default to globally if scope is not provided
-// 		// No additional filter needed for global scope
-// 	case "globally":
-// 		// No additional filter needed for global scope
-// 	case "country":
-// 		filter["country"] = bson.M{"$exists": true}
-// 	case "state":
-// 		filter["state"] = bson.M{"$exists": true}
-// 	case "India":
-// 		filter["country"] = "India"
-// 	default:
-// 		return nil, fmt.Errorf("invalid scope: %s", scope)
-// 	}
-// 	fmt.Println("Filter:", filter)
-
-// 	// Find top N scores based on filter
-// 	limit := int64(n)
-// 	options := options.Find().SetSort(bson.D{{"score", -1}}).SetLimit(limit)
-// 	cursor, err := scoreCollection.Find(context.Background(), filter, options)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer cursor.Close(context.Background())
-
-// 	// Decode scores from cursor
-// 	if err := cursor.All(context.Background(), &scores); err != nil {
-// 		return nil, err
-// 	}
-
-//		return scores, nil
-//	}
 package storage
 
 import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"sort"
 	"sync"
 
@@ -143,7 +21,7 @@ var (
 
 // InitMongoDB initializes MongoDB connection
 func InitMongoDB() error {
-	clientOptions := options.Client().ApplyURI("mongodb+srv://atulranjan789:atul1234@cluster0.xr7e6vt.mongodb.net/")
+	clientOptions := options.Client().ApplyURI(os.Getenv("MONGODB_URI"))
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
 		return err
