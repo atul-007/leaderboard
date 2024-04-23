@@ -12,7 +12,11 @@ import (
 
 // HighScoreController handles highscore related operations
 type HighScoreController struct{}
+type ErrorResponse struct {
+	Message string `json:"message"`
+}
 
+// SubmitScore handles submitting a score to the system
 // @Summary Submit score
 // @Description Submit score to the system
 // @Accept  json
@@ -21,7 +25,6 @@ type HighScoreController struct{}
 // @Success 200 {string} string "Score submitted successfully"
 // @Failure 400 {object} ErrorResponse
 // @Router /submit [post]
-// SubmitScore handles submitting a score to the system
 func (h *HighScoreController) SubmitScore(c *gin.Context) {
 	var score models.Score
 	if err := c.ShouldBindJSON(&score); err != nil {
@@ -47,6 +50,7 @@ func (h *HighScoreController) SubmitScore(c *gin.Context) {
 	c.JSON(http.StatusOK, "Score submitted successfully")
 }
 
+// GetRank handles fetching the rank of a user
 // @Summary Get rank
 // @Description Get rank of a user
 // @Produce  json
@@ -55,8 +59,6 @@ func (h *HighScoreController) SubmitScore(c *gin.Context) {
 // @Success 200 {object} int "User rank"
 // @Failure 400 {object} ErrorResponse
 // @Router /get_rank [get]
-
-// GetRank handles fetching the rank of a user
 func (h *HighScoreController) GetRank(c *gin.Context) {
 	userName := c.Query("user_name")
 	scope := c.Query("scope") // Scope: state, country, or globally
@@ -70,6 +72,7 @@ func (h *HighScoreController) GetRank(c *gin.Context) {
 	c.JSON(http.StatusOK, rank)
 }
 
+// ListTopN handles listing top N ranks
 // @Summary List top N
 // @Description List top N ranks
 // @Produce  json
@@ -78,7 +81,6 @@ func (h *HighScoreController) GetRank(c *gin.Context) {
 // @Success 200 {object} []models.Score "Top N scores"
 // @Failure 400 {object} ErrorResponse
 // @Router /list_top_n [get]
-// ListTopN handles listing top N ranks
 func (h *HighScoreController) ListTopN(c *gin.Context) {
 	nStr := c.Query("n")      // Number of ranks to list as string
 	scope := c.Query("scope") // Scope: state, country, or globally

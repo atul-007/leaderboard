@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"sort"
 	"sync"
 
@@ -21,7 +20,9 @@ var (
 
 // InitMongoDB initializes MongoDB connection
 func InitMongoDB() error {
-	clientOptions := options.Client().ApplyURI(os.Getenv("MONGODB_URI"))
+	//clientOptions := options.Client().ApplyURI(os.Getenv("MONGODB_URI"))
+	clientOptions := options.Client().ApplyURI("mongodb+srv://atulranjan789:atul1234@cluster0.xr7e6vt.mongodb.net/")
+
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
 		return err

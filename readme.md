@@ -66,4 +66,3 @@ The Online Gaming Leaderboard API is a RESTful API for managing highscores in an
 - `score` (int): Score achieved by the user.
 
 ---
-

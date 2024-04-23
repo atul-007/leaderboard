@@ -19,6 +19,8 @@ func init() {
 }
 
 func main() {
+	//gin.SetMode(gin.ReleaseMode)
+
 	r := gin.New()
 
 	// Middlewares
@@ -33,9 +35,6 @@ func main() {
 
 	// Setup routes
 	r = routes.SetupRouter()
-
-	// Serve Swagger UI
-	// /r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Run the server
 	port := os.Getenv("PORT")
