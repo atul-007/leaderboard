@@ -6,5 +6,6 @@ type Score struct {
 	UserName string  `json:"user_name"`
 	Country  string  `json:"country"`
 	State    string  `json:"state"`
+	City     string  `json:"city"`
 	Score    float64 `json:"score"`
 }

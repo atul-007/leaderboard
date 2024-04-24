@@ -7,6 +7,7 @@ import (
 	"github.com/atul-007/leaderboard/models"
 	"github.com/atul-007/leaderboard/storage"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // HighScoreController handles highscore related operations
@@ -24,10 +25,34 @@ type ErrorResponse struct {
 // @Success 200 {string} string "Score submitted successfully"
 // @Failure 400 {object} ErrorResponse
 // @Router /submit [post]
+// SubmitScore handles submitting a score to the system
 func (h *HighScoreController) SubmitScore(c *gin.Context) {
 	var score models.Score
 	if err := c.ShouldBindJSON(&score); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Check if username already exists
+	existingUser, err := storage.GetUserByUsername(score.UserName)
+	if err != nil && err != mongo.ErrNoDocuments {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check username"})
+		return
+	}
+	if existingUser != nil {
+		// User exists, check if the score is different
+		if existingUser.Score != score.Score {
+			// Score is different, update the score
+			err = storage.UpdateScore(&score)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			c.JSON(http.StatusOK, "Score updated successfully")
+			return
+		}
+		// Score is the same, return message
+		c.JSON(http.StatusOK, "Score is already the same")
 		return
 	}
 
@@ -40,7 +65,7 @@ func (h *HighScoreController) SubmitScore(c *gin.Context) {
 	}
 
 	// Save score to MongoDB
-	err := storage.SaveScore(&score)
+	err = storage.SaveScore(&score)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
