@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -84,7 +83,6 @@ func (h *HighScoreController) GetRank(c *gin.Context) {
 func (h *HighScoreController) ListTopN(c *gin.Context) {
 	nStr := c.Query("n")      // Number of ranks to list as string
 	scope := c.Query("scope") // Scope: state, country, or globally
-	fmt.Println(nStr)
 	// Convert n to integer
 	n, err := strconv.Atoi(nStr)
 	if err != nil {

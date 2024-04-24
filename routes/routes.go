@@ -9,6 +9,7 @@ import (
 
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
+	//swagger
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Initialize controllers
