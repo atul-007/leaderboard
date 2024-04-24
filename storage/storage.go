@@ -109,7 +109,7 @@ func GetRank(userName, scope string) (int, error) {
 }
 
 // ListTopN lists the top N ranks based on the scope
-func ListTopN(n int, scope string) ([]models.Score, error) {
+func ListTopN(n int, scope string, scopeName string) ([]models.Score, error) {
 	mu.Lock()
 	defer mu.Unlock()
 
@@ -124,13 +124,11 @@ func ListTopN(n int, scope string) ([]models.Score, error) {
 	case "globally":
 		// No additional filter needed for global scope
 	case "country":
-		filter["country"] = bson.M{"$exists": true}
+		filter["country"] = scopeName
 	case "state":
-		filter["state"] = bson.M{"$exists": true}
-	case "India":
-		filter["country"] = "India"
+		filter["state"] = scopeName
 	case "city":
-		filter["city"] = bson.M{"$exists": true}
+		filter["city"] = scopeName
 	default:
 		return nil, fmt.Errorf("invalid scope: %s", scope)
 	}

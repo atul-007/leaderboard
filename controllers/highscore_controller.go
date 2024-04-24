@@ -108,6 +108,7 @@ func (h *HighScoreController) GetRank(c *gin.Context) {
 func (h *HighScoreController) ListTopN(c *gin.Context) {
 	nStr := c.Query("n")      // Number of ranks to list as string
 	scope := c.Query("scope") // Scope: state, country, or globally
+	scopeName := c.Query("scopeName")
 	// Convert n to integer
 	n, err := strconv.Atoi(nStr)
 	if err != nil {
@@ -116,7 +117,7 @@ func (h *HighScoreController) ListTopN(c *gin.Context) {
 	}
 
 	// List top N ranks based on scope
-	topRanks, err := storage.ListTopN(n, scope)
+	topRanks, err := storage.ListTopN(n, scope, scopeName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
